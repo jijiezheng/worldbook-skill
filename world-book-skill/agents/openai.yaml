@@ -4,10 +4,12 @@ short_description: Create and edit SillyTavern world book JSON entries via CLI
 description: >-
   CLI tool for managing SillyTavern World Book (世界书) JSON files.
   Supports creating new world books, adding/editing/deleting entries,
-  setting injection positions (↑Char ↓Char ↑AT ↓AT @D ↑EM ↓EM Outlet),
-  trigger keywords, depth, activation strategies, and all entry-level fields.
-icon: ""
+  setting injection positions and activation strategies.
+  Supports multiple scenarios: original card creation, light novel/game conversion,
+  writing style extraction, item/ability configuration, world-building.
 default_prompt: |
-  Use `scripts/world-book-create.py` to manage SillyTavern world book entries.
-  See `references/position-guide.md` for position conventions.
-  See `references/entry-conventions.md` for content writing conventions.
+  在开始工作前，先读取 references/guide.md 判断任务类型，再按指引读取对应 reference 文件。
+  
+  使用 scripts/world-book-create.py 管理世界书条目。
+  使用 scripts/query.py 查看和搜索世界书条目。
+  创建任务时必须先写 outline.txt 总纲，再逐条填充条目。
