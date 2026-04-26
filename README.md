@@ -9,6 +9,8 @@
 一个 **AI Skill + CLI 工具** 的组合包。给 AI 装上它，SAY：
 
 > "帮我读这本轻小说，生成世界书，把所有角色、世界观做成条目"
+> "为我生成一个有关于赛车的世界书"
+> "写一个学习这个小说作者写作风格的世界书"
 
 AI 就会自动做三件事：
 1. **读** — 理解小说/设定文本
@@ -26,6 +28,18 @@ AI 就会自动做三件事：
 | 单角色/多角色卡 | 自动按铁律配置蓝灯/绿灯策略 |
 | 条目编写铁律 | 内置角色卡编写指南，生成高质量条目 |
 
+## 支持场景
+
+| 场景 | 使用的 reference |
+|------|-----------------|
+| 原创角色卡/世界书 | character-guide + worldbuilding-guide + config-guide |
+| 轻小说/游戏转化 | conversion-guide + 全部 extract-* + 全部创作 guide |
+| 纯世界观设定 | worldbuilding-guide + config-guide |
+| 物品/能力设定 | extract-item + worldbuilding-guide + config-guide |
+| 文风提取 | extract-style + config-guide |
+| 故事/章节提取 | extract-story + config-guide |
+| 修改已有世界书 | query.py + 对应内容类型的 reference |
+
 
 ## 使用：
 
@@ -39,16 +53,25 @@ AI 就会自动做三件事：
 ## 目录结构
 
 ```
-publish/
-├── world-book-skill/           # AI Skill 包（给 AI Agent 用）
-│   ├── SKILL.md                # 技能入口 + 操作指令
-│   ├── scripts/
-│   │   └── world-book-create.py    # CLI 管理工具
-│   ├── references/
-│   │   ├── entry-conventions.md # 角色卡编写铁律
-│   │   └── position-guide.md   # 注入位置参考
-│   └── agents/
-│       └── openai.yaml         # 技能名片
+world-book-skill/
+├── SKILL.md                     # 技能入口：分步工作流 + 工具使用指引
+├── agents/openai.yaml           # 技能注册元数据
+├── scripts/
+│   ├── world-book-create.py    # 世界书 JSON 增删改查 CLI
+│   └── query.py                # 世界书轻量查询/导出 CLI
+└── references/
+    ├── guide.md                # 场景路由器（AI 第一步读取）
+    ├── entry-conventions.md    # 总索引
+    ├── character-guide.md      # 角色条目创作铁律
+    ├── worldbuilding-guide.md  # 世界观写作 + 压缩 + 嵌套
+    ├── config-guide.md         # 世界书配置规则
+    ├── position-guide.md       # ST 注入位置参考
+    ├── extract-worldbuilding.md # 世界观提取指南
+    ├── extract-character.md    # 角色提取指南
+    ├── extract-item.md         # 物品/能力提取创建指南
+    ├── extract-story.md        # 故事/章节提取指南
+    ├── extract-style.md        # 文风提取指南
+    └── conversion-guide.md     # 转化完整工作流
 ```
 
 ## 依赖
