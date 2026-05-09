@@ -62,13 +62,20 @@
 
 ---
 
-## 四、递归设置
+## 四、递归设置（双字段，必须同时勾选）
 
-**所有条目必须勾选 `--prevent-recursion`。** 无一例外。
+**所有条目必须同时勾选两个递归选项。** 无一例外。
 
-⚠️ `world-book-create.py` 脚本默认 `preventRecursion=false`。如果不加 `--prevent-recursion`，条目就**不会**阻止递归。创建每条命令时都必须带这个 flag。
+| CLI Flag | JSON 字段 | SillyTavern 术语 | 含义 |
+|----------|-----------|------------------|------|
+| `--prevent-recursion` | `preventRecursion` | 不可进一步递归 | 本条目**不会触发**其他条目 |
+| `--exclude-recursion` | `excludeRecursion` | 无法被其他条目激活 | 本条目**不被**其他条目触发 |
 
-不勾的后果：条目A内容出现条目B的关键词→B被触发→B的内容触发C→连锁反应→token爆炸。蓝灯和绿灯的配置全部白做。
+⚠️ `world-book-create.py` 脚本默认两个字段均为 `false`。如果不加 flag，条目就**不会**设置递归防护。创建每条命令时都必须带这两个 flag。
+
+不勾 `preventRecursion` 的后果：条目A内容出现条目B的关键词→B被触发→B的内容触发C→连锁反应→token爆炸。蓝灯和绿灯的配置全部白做。
+
+不勾 `excludeRecursion` 的后果：条目B的关键词出现在条目C的内容中→条目C加载时触发了条目B→B的内容又触发了D→双向递归。特别是蓝灯条目之间互相触发，会导致关键设定条目被意外激活后又被驱逐出上下文。
 
 ---
 
@@ -95,22 +102,25 @@ NPC条目：全名 + 昵称 + 外号 + 职务
 
 ```bash
 # 世界观总纲（蓝灯，角色定义前）
---constant --position 0 --order 1 --prevent-recursion
+--constant --position 0 --order 1 --prevent-recursion --exclude-recursion
 
 # 角色详细信息（蓝灯，角色定义后，单角色卡）
---constant --position 1 --order 99 --prevent-recursion
+--constant --position 1 --order 99 --prevent-recursion --exclude-recursion
 
 # NPC条目（绿灯，角色定义后，关键词触发）
---keys "角色名,昵称,外号" --position 1 --order 100 --scan-depth 2 --prevent-recursion
+--keys "角色名,昵称,外号" --position 1 --order 100 --scan-depth 2 --prevent-recursion --exclude-recursion
 
 # 场景条目（绿灯，角色定义后，关键词触发）
---keys "场景名,地点名" --position 1 --order 80 --scan-depth 2 --prevent-recursion
+--keys "场景名,地点名" --position 1 --order 80 --scan-depth 2 --prevent-recursion --exclude-recursion
 
 # 行为纠正/二次解释（绿灯，D0）
---keys "角色名" --position 4 --depth 0 --role 0 --scan-depth 2 --prevent-recursion
+--keys "角色名" --position 4 --depth 0 --role 0 --scan-depth 2 --prevent-recursion --exclude-recursion
 
 # 文风条目（蓝灯，Author's Note前）
---constant --position 2 --order 1 --prevent-recursion
+--constant --position 2 --order 1 --prevent-recursion --exclude-recursion
+
+# 禁词条目（蓝灯，Author's Note前）
+--constant --position 2 --order 1 --prevent-recursion --exclude-recursion
 ```
 
 ---
@@ -150,6 +160,7 @@ NPC条目：全名 + 昵称 + 外号 + 职务
 - [ ] 多角色卡？→ 速览 `constant=true`，角色详情 `constant=false` + `keys`
 - [ ] 世界观条目全部 `constant=true`
 - [ ] NPC/场景/故事章节全部 `constant=false` + `keys`
-- [ ] **⚠️ 所有条目 `preventRecursion=true`**（脚本默认false，不加flag就不会设！）
+- [ ] **⚠️ 所有条目 `preventRecursion=true` 且 `excludeRecursion=true`**（脚本默认false，不加flag就不会设！）
 - [ ] 关键词用英文逗号分隔，无空格
 - [ ] 绿灯条目 `scanDepth=2`
+- [ ] 禁词条目已创建（3条：叙事禁词 + 比喻禁词 + 描写禁律，蓝灯 position=2）

@@ -58,6 +58,7 @@ def build_summary(uid_str, entry):
         "scanDepth": entry.get("scanDepth"),
         "selective": entry.get("selective", False),
         "preventRecursion": entry.get("preventRecursion", False),
+        "excludeRecursion": entry.get("excludeRecursion", False),
         "disable": entry.get("disable", False),
     }
 
@@ -158,7 +159,7 @@ def main():
     parser.add_argument("--uid", type=int, help="查看指定 UID 条目的完整信息")
     parser.add_argument("--search", help="搜索关键词（匹配标题/内容/触发词）")
     parser.add_argument("--resolve", action="store_true", help="解析条目的 @UID/@名称 嵌套引用")
-    parser.add_argument("--brief", action="store_true", help="极简模式（含配置字段）：输出 uid/comment/content_length/keys/constant/preventRecursion")
+    parser.add_argument("--brief", action="store_true", help="极简模式（含配置字段）：输出 uid/comment/content_length/keys/constant/preventRecursion/excludeRecursion")
 
     args = parser.parse_args()
 
@@ -213,6 +214,7 @@ def main():
                 "keys": e.get("key", []),
                 "constant": e.get("constant", False),
                 "preventRecursion": e.get("preventRecursion", False),
+                "excludeRecursion": e.get("excludeRecursion", False),
             })
     else:
         summary_list = []

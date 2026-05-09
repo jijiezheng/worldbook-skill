@@ -192,6 +192,8 @@ def build_entry(args, uid=None, display_index=None, existing_entry=None):
         entry["role"] = args.role
     if args.prevent_recursion:
         entry["preventRecursion"] = True
+    if args.exclude_recursion:
+        entry["excludeRecursion"] = True
     if args.scan_depth is not None:
         entry["scanDepth"] = args.scan_depth
     if args.case_sensitive is not None:
@@ -255,15 +257,18 @@ def main():
 示例:
   # 新建世界书，添加条目
   python world-book-create.py my_book.json -n --name "我的世界书" --add \\
-    --comment "规则1" --content "这里写条目内容" --keys 触发词1,触发词2 --depth 2
+    --comment "规则1" --content "这里写条目内容" --keys 触发词1,触发词2 --depth 2 \\
+    --prevent-recursion --exclude-recursion
 
   # 从文件读取条目内容
   python world-book-create.py my_book.json -n --add \\
-    --comment "长篇设定" --content @设定.txt --keys 战斗 --constant
+    --comment "长篇设定" --content @设定.txt --keys 战斗 --constant \\
+    --prevent-recursion --exclude-recursion
 
   # 在已有世界书上追加条目
   python world-book-create.py existing_book.json --add \\
-    --comment "新条目" --content "新内容" --keys 关键词 --depth 3
+    --comment "新条目" --content "新内容" --keys 关键词 --depth 3 \\
+    --prevent-recursion --exclude-recursion
 
   # 编辑已有条目 (按 UID)
   python world-book-create.py existing_book.json --edit 3 \\
@@ -340,7 +345,9 @@ def main():
     parser.add_argument("--role", type=int, choices=[0, 1, 2],
                         help="角色: 0=System 1=User 2=Assistant")
     parser.add_argument("--prevent-recursion", action="store_true",
-                        help="阻止递归")
+                        help="不可进一步递归（本条目不触发其他条目）")
+    parser.add_argument("--exclude-recursion", action="store_true",
+                        help="无法被其他条目激活（本条目不被其他条目触发）")
     parser.add_argument("--scan-depth", type=int,
                         help="扫描深度")
     parser.add_argument("--case-sensitive", type=lambda x: x.lower() in ("true", "1", "yes"),
@@ -377,6 +384,8 @@ def main():
                 f"depth={e['depth']}  |  "
                 f"常驻={'Y' if e.get('constant') else 'N'}  |  "
                 f"disable={'Y' if e.get('disable') else 'N'}  |  "
+                f"preventRec={'Y' if e.get('preventRecursion') else 'N'}  |  "
+                f"excludeRec={'Y' if e.get('excludeRecursion') else 'N'}  |  "
                 f"order={e.get('order')}  |  "
                 f"触发词={e.get('key', [])}"
             )
